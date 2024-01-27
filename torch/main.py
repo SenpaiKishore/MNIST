@@ -27,29 +27,29 @@ def downloadFile(url, destination, outputFile):
 
     os.remove(os.path.join(path, destination))
 
-downloadFile('http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz', 'train-images-idx3-ubyte.gz', 'Ptrain-images.idx3-ubyte')
+downloadFile('http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz', 'train-images-idx3-ubyte.gz', 'train-images.idx3-ubyte')
 downloadFile('http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz', 'train-labels-idx1-ubyte.gz', 'train-labels.idx1-ubyte')
 downloadFile('http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz', 't10k-images-idx3-ubyte.gz', 't10k-images.idx3-ubyte')
 downloadFile('http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz', 't10k-labels-idx1-ubyte.gz', 't10k-labels.idx1-ubyte')
 
 
 class CNN(nn.Module):
-  def __init__(self):
-      super(CNN, self).__init__()
-      self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
-      self.conv2 = nn.Conv2d(32, 64, kernel_size=5)
-      self.fc1 = nn.Linear(1024, 128)
-      self.fc2 = nn.Linear(128, 10)
+    def __init__(self):
+        super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=6)
+        self.conv2 = nn.Conv2d(32, 32, stride=2, kernel_size=6)
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=6)
+        self.fc1 = nn.Linear(1024, 128)
+        self.fc2 = nn.Linear(128, 10)
 
-  def forward(self, x):
-      x = F.relu(self.conv1(x))
-      x = F.max_pool2d(x, kernel_size=2, stride=2)
-      x = F.relu(self.conv2(x))
-      x = F.max_pool2d(x, kernel_size=2, stride=2)
-      x = x.view(-1, 1024)
-      x = F.relu(self.fc1(x))
-      x = self.fc2(x)
-      return x
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = x.view(-1, 1024)
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
 
 with open(os.path.join(currentDir, "../dataset/train-images.idx3-ubyte"), 'rb') as f:
     magic, num_images, num_rows, num_cols = struct.unpack('>IIII', f.read(16))
