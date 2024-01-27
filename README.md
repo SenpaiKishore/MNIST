@@ -24,7 +24,7 @@ pip install -r requirements.txt
 python3 torch/main.py
 ```
 
-**4B. To run PyTorch implementation, run:**
+**4B. To run MLX implementation, run:**
 ```bash
 python3 mlx/main.py
 ```
