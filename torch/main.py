@@ -8,6 +8,7 @@ import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 from torch.utils.data import TensorDataset, DataLoader
 
 currentDir = os.path.dirname(os.path.abspath(__file__))
@@ -95,8 +96,10 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 os.system("clear")
 print("Starting Traing....")
 
+losses = []
+accuracies = []
 startTime = time.time()
-num_epochs = 10
+num_epochs = 2
 for epoch in range(num_epochs):
     model.train()
     for images, labels in trainLoader:
@@ -104,11 +107,14 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         outputs = model(images)
         loss = lossFunction(outputs, labels) # Calculates loss
+        losses.append(loss.item())
         loss.backward() #Backpropagates through network and computes gradients
         optimizer.step() #Updates Model parameters based on computed gradients
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
 print("Completed training in ", int(time.time() - startTime), "s")
+plt.plot(losses)
+plt.show()
 
 #EVAL
 model.eval()
