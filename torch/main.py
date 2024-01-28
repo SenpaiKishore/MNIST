@@ -99,22 +99,24 @@ print("Starting Traing....")
 losses = []
 accuracies = []
 startTime = time.time()
-num_epochs = 2
-for epoch in range(num_epochs):
+NUM_EPOCHS = 10
+for epoch in range(NUM_EPOCHS):
     model.train()
     for images, labels in trainLoader:
         images, labels = images.to("mps"), labels.to("mps")
         optimizer.zero_grad()
         outputs = model(images)
         loss = lossFunction(outputs, labels) # Calculates loss
-        losses.append(loss.item())
         loss.backward() #Backpropagates through network and computes gradients
         optimizer.step() #Updates Model parameters based on computed gradients
-    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
+        #Plotting loss vs accuracy
+        predicted = torch.argmax(outputs.data, 1)
+        accuracy = (predicted == labels).float().mean()
+        losses.append(loss.item())
+        accuracies.append(accuracy.item())
+    print(f'Epoch [{epoch+1}/{NUM_EPOCHS}], Loss: {loss.item():.4f}')
 print("Completed training in ", int(time.time() - startTime), "s")
-plt.plot(losses)
-plt.show()
 
 #EVAL
 model.eval()
@@ -129,3 +131,8 @@ with torch.no_grad():
         correct += (predicted == labels).sum().item()
 
     print(f"Test Accuracy: {100 * correct / total:.2f}%")
+
+plt.ylim(0, 1.2)
+plt.plot(losses)
+plt.plot(accuracies)
+plt.show()
